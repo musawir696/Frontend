@@ -1,12 +1,9 @@
+"use client";
+
 import { MoreVertical, Moon, Box, Image as ImageIcon, Youtube, Smile, CornerUpLeft, Zap, Mic, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { fetchPosts } from "@/lib/api";
-
-interface PostAPI {
-  id: number;
-  title: string;
-  body: string;
-}
+import { User, PostAPI } from "@/types";
 
 interface Message {
   id: number;
@@ -17,17 +14,20 @@ interface Message {
   isAI?: boolean;
 }
 
-export const ChatWindow = () => {
+export const ChatWindow = ({ user }: { user: User | null }) => {
     const [messages, setMessages] = useState<Message[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        if (!user) return;
+
         async function loadMessages() {
+            setLoading(true);
             try {
-                const data = await fetchPosts(1); // Default to user 1
+                const data = await fetchPosts(user!.id);
                 const formattedMessages = data.map((post: PostAPI, idx: number) => ({
                     id: post.id,
-                    sender: idx % 2 === 0 ? "Olivia Mckinsey" : "Michael",
+                    sender: idx % 2 === 0 ? `${user!.firstName} ${user!.lastName}` : "Assistant",
                     text: post.body,
                     time: "23:08",
                     type: idx % 2 === 0 ? "incoming" : "outgoing",
@@ -41,13 +41,21 @@ export const ChatWindow = () => {
             }
         }
         loadMessages();
-    }, []);
+    }, [user]);
+
+  if (!user) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 text-slate-400">
+        <p>Select a contact to start chatting</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex flex-col bg-slate-50 h-[calc(100vh-64px)] overflow-hidden">
       {/* Header */}
       <div className="h-16 px-6 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
-        <h2 className="font-bold text-slate-900">Olivia Mckinsey</h2>
+        <h2 className="font-bold text-slate-900">{user.firstName} {user.lastName}</h2>
         <div className="flex items-center space-x-2">
           <button className="p-2 text-slate-500 hover:bg-slate-50 rounded-lg">
             <MoreVertical className="w-5 h-5" />
@@ -63,12 +71,6 @@ export const ChatWindow = () => {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        <div className="flex justify-center mb-8">
-            <span className="px-3 py-1 bg-white rounded-lg text-xs font-bold text-slate-900 shadow-sm ring-1 ring-slate-200">
-                28 August 2025
-            </span>
-        </div>
-
         {loading ? (
              <div className="h-full flex flex-col items-center justify-center opacity-50 space-y-2">
                 <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
@@ -80,7 +82,7 @@ export const ChatWindow = () => {
                 <div className={`max-w-[80%] ${msg.type === 'outgoing' ? 'flex flex-row-reverse space-x-reverse' : 'flex space-x-3'}`}>
                     {msg.type === 'incoming' && (
                         <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0 mt-1">
-                            O
+                            {user.firstName.charAt(0)}
                         </div>
                     )}
                     <div className="space-y-1">

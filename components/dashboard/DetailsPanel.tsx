@@ -1,8 +1,15 @@
-"use client";
+import { ChevronDown, User as UserIcon, Plus, X, MessageSquare, Phone, Instagram, LayoutDashboard } from "lucide-react";
+import { User } from "@/types";
 
-import { ChevronDown, User, Plus, X, MessageSquare, Phone, Instagram, LayoutDashboard } from "lucide-react";
+export const DetailsPanel = ({ user }: { user: User | null }) => {
+  if (!user) {
+    return (
+      <div className="w-80 border-l border-slate-200 bg-white h-[calc(100vh-64px)] hidden xl:flex items-center justify-center text-slate-400">
+        <p className="text-sm">Select a contact</p>
+      </div>
+    );
+  }
 
-export const DetailsPanel = () => {
   return (
     <div className="w-80 border-l border-slate-200 bg-white h-[calc(100vh-64px)] overflow-y-auto hidden xl:block">
       {/* Header */}
@@ -21,16 +28,16 @@ export const DetailsPanel = () => {
                     <span className="text-sm text-slate-400">Assignee</span>
                     <div className="flex items-center space-x-2">
                         <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center">
-                            <User className="w-3 h-3 text-slate-500" />
+                            <UserIcon className="w-3 h-3 text-slate-500" />
                         </div>
-                        <span className="text-sm font-bold text-slate-900">James West</span>
+                        <span className="text-sm font-bold text-slate-900">Michael Johnson</span>
                     </div>
                 </div>
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-slate-400">Team</span>
                     <div className="flex items-center space-x-2">
                         <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center">
-                            <User className="w-3 h-3 text-slate-500" />
+                            <UserIcon className="w-3 h-3 text-slate-500" />
                         </div>
                         <span className="text-sm font-bold text-slate-900">Sales Team</span>
                     </div>
@@ -41,10 +48,10 @@ export const DetailsPanel = () => {
         {/* Contact Data */}
         <Section title="Contact Data">
             <div className="space-y-4 pt-2">
-                <DataRow label="First Name" value="Olivia" />
-                <DataRow label="Last Name" value="Mckinsey" />
-                <DataRow label="Phone number" value="+1 (312) 555-0134" />
-                <DataRow label="Email" value="olivia.mckinsey@gmail.com" />
+                <DataRow label="First Name" value={user.firstName} />
+                <DataRow label="Last Name" value={user.lastName} />
+                <DataRow label="Phone number" value={user.phone} />
+                <DataRow label="Email" value={user.email} />
                 <button className="text-xs font-bold text-slate-900 hover:underline">See all</button>
             </div>
         </Section>

@@ -1,44 +1,49 @@
-"use client";
-
 import { Search, ChevronDown, CheckCircle2, Loader2 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { fetchUsers } from "@/lib/api";
+import { User } from "@/types";
+import Image from "next/image";
 
-interface UserAPI {
-  id: number;
-  name: string;
-  email: string;
-  company: {
-    catchPhrase: string;
-  };
+interface ChatListProps {
+  onSelectUser: (user: User) => void;
+  selectedUserId?: number;
 }
 
-export const ChatList = () => {
+export const ChatList = ({ onSelectUser, selectedUserId }: ChatListProps) => {
     const [searchQuery, setSearchQuery] = useState("");
-    const [users, setUsers] = useState<UserAPI[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let isMounted = true;
         async function loadUsers() {
             try {
                 const data = await fetchUsers();
-                setUsers(data);
+                if (isMounted) {
+                    setUsers(data);
+                    if (data.length > 0 && !selectedUserId) {
+                        onSelectUser(data[0]);
+                    }
+                }
             } catch (err) {
-                setError("Failed to load contacts");
+                if (isMounted) {
+                    setError("Failed to load contacts");
+                }
                 console.error(err);
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         }
         loadUsers();
-    }, []);
-
-    const colors = ["bg-blue-500", "bg-yellow-500", "bg-indigo-500", "bg-orange-500", "bg-teal-500", "bg-pink-500", "bg-purple-500", "bg-amber-500", "bg-lime-500", "bg-emerald-500"];
+        return () => { isMounted = false; };
+    }, [onSelectUser, selectedUserId]);
 
     const filteredUsers = useMemo(() => {
         return users.filter(user => 
-            user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
             user.email.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [users, searchQuery]);
@@ -97,22 +102,30 @@ export const ChatList = () => {
                 No contacts found for &quot;{searchQuery}&quot;
             </div>
         ) : (
-            filteredUsers.map((user, idx) => (
+            filteredUsers.map((user) => (
             <button
                 key={user.id}
+                onClick={() => onSelectUser(user)}
                 className={`w-full p-4 flex items-start space-x-3 transition-colors text-left ${
-                idx === 0 && !searchQuery ? "bg-slate-50" : "hover:bg-slate-50/50"
+                    selectedUserId === user.id ? "bg-blue-50/50" : "hover:bg-slate-50/50"
                 }`}
             >
-                <div className={`w-10 h-10 rounded-full ${colors[idx % colors.length]} flex items-center justify-center text-white font-bold shrink-0`}>
-                {user.name.charAt(0)}
+                <div className="relative shrink-0">
+                    <Image 
+                        src={user.image} 
+                        alt={user.firstName} 
+                        width={40}
+                        height={40}
+                        className="rounded-full bg-slate-100" 
+                    />
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                 </div>
                 <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-0.5">
-                    <span className="font-bold text-slate-900 truncate">{user.name}</span>
+                    <span className="font-bold text-slate-900 truncate">{user.firstName} {user.lastName}</span>
                     <span className="text-[11px] text-slate-400">23:23</span>
                 </div>
-                <p className="text-xs text-slate-500 truncate">{user.company.catchPhrase}</p>
+                <p className="text-xs text-slate-500 truncate">{user.company.name}</p>
                 </div>
             </button>
             ))
