@@ -10,15 +10,16 @@ interface HoneycombIconProps {
   initialX: number;
   initialY: number;
   isSelected?: boolean;
+  className?: string;
 }
 
-export const HoneycombIcon = ({ Icon, label, initialX, initialY, isSelected: initialSelected }: HoneycombIconProps) => {
+export const HoneycombIcon = ({ Icon, label, initialX, initialY, isSelected: initialSelected, className }: HoneycombIconProps) => {
   const [isSelected, setIsSelected] = useState(initialSelected || false);
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.div
-      className="absolute cursor-pointer group"
+      className={`absolute cursor-pointer group ${className || ""}`}
       style={{ left: `${initialX}%`, top: `${initialY}%` }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}

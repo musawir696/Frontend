@@ -1,6 +1,4 @@
-"use client";
-
-import { MoreVertical, Moon, Box, Image as ImageIcon, Youtube, Smile, CornerUpLeft, Zap, Mic, Loader2 } from "lucide-react";
+import { MoreVertical, Moon, Box, Image as ImageIcon, Youtube, Smile, CornerUpLeft, Zap, Mic, Loader2, ChevronLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { fetchPosts } from "@/lib/api";
 import { User, PostAPI } from "@/types";
@@ -14,7 +12,12 @@ interface Message {
   isAI?: boolean;
 }
 
-export const ChatWindow = ({ user }: { user: User | null }) => {
+interface ChatWindowProps {
+  user: User | null;
+  onBack?: () => void;
+}
+
+export const ChatWindow = ({ user, onBack }: ChatWindowProps) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -25,12 +28,12 @@ export const ChatWindow = ({ user }: { user: User | null }) => {
             setLoading(true);
             try {
                 const data = await fetchPosts(user!.id);
-                const formattedMessages = data.map((post: PostAPI, idx: number) => ({
+                const formattedMessages: Message[] = data.map((post: PostAPI, idx: number) => ({
                     id: post.id,
                     sender: idx % 2 === 0 ? `${user!.firstName} ${user!.lastName}` : "Assistant",
                     text: post.body,
                     time: "23:08",
-                    type: idx % 2 === 0 ? "incoming" : "outgoing",
+                    type: (idx % 2 === 0 ? "incoming" : "outgoing") as "incoming" | "outgoing",
                     isAI: idx % 2 !== 0
                 }));
                 setMessages(formattedMessages);
@@ -54,8 +57,20 @@ export const ChatWindow = ({ user }: { user: User | null }) => {
   return (
     <div className="flex-1 flex flex-col bg-slate-50 h-[calc(100vh-64px)] overflow-hidden">
       {/* Header */}
-      <div className="h-16 px-6 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
-        <h2 className="font-bold text-slate-900">{user.firstName} {user.lastName}</h2>
+      <div className="h-16 px-4 md:px-6 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
+        <div className="flex items-center space-x-2 md:space-x-0">
+          {onBack && (
+            <button 
+              onClick={onBack}
+              className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-50 rounded-lg"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
+          <h2 className="font-bold text-slate-900 truncate">
+            {user.firstName} {user.lastName}
+          </h2>
+        </div>
         <div className="flex items-center space-x-2">
           <button className="p-2 text-slate-500 hover:bg-slate-50 rounded-lg">
             <MoreVertical className="w-5 h-5" />
