@@ -1,4 +1,4 @@
-import { User as UserIcon, ChevronDown, MessageCircle, Hash, Loader2 } from "lucide-react";
+import { User as UserIcon, ChevronDown, ChevronRight, MessageCircle, Hash, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { fetchUsers } from "@/lib/api";
 import { User } from "@/types";
@@ -6,6 +6,15 @@ import { User } from "@/types";
 export const Sidebar = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openSections, setOpenSections] = useState({
+    teams: true,
+    users: true,
+    channels: true
+  });
+
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
   useEffect(() => {
     async function loadUsers() {
@@ -36,51 +45,66 @@ export const Sidebar = () => {
 
         {/* Teams Section */}
         <div>
-          <div className="flex items-center justify-between px-2 mb-4">
+          <button 
+            onClick={() => toggleSection('teams')}
+            className="w-full flex items-center justify-between px-2 mb-4 group"
+          >
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Teams</h3>
-            <ChevronDown className="w-3 h-3 text-slate-400" />
-          </div>
-          <div className="space-y-1">
-            <SidebarItem icon={Hash} label="Sales" count={7} color="bg-blue-100 text-blue-600" />
-            <SidebarItem icon={Hash} label="Customer Support" count={16} color="bg-green-100 text-green-600" />
-          </div>
+            {openSections.teams ? <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-slate-600" /> : <ChevronRight className="w-3 h-3 text-slate-400 group-hover:text-slate-600" />}
+          </button>
+          {openSections.teams && (
+            <div className="space-y-1">
+              <SidebarItem icon={Hash} label="Sales" count={7} color="bg-blue-100 text-blue-600" />
+              <SidebarItem icon={Hash} label="Customer Support" count={16} color="bg-green-100 text-green-600" />
+            </div>
+          )}
         </div>
 
         {/* Users Section */}
         <div>
-          <div className="flex items-center justify-between px-2 mb-4">
+          <button 
+            onClick={() => toggleSection('users')}
+            className="w-full flex items-center justify-between px-2 mb-4 group"
+          >
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Users</h3>
-            <ChevronDown className="w-3 h-3 text-slate-400" />
-          </div>
-          <div className="space-y-1">
-            {loading ? (
-               <div className="flex items-center space-x-2 px-3 py-2 text-slate-400">
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  <span className="text-xs">Loading...</span>
-               </div>
-            ) : (
-                users.map((user, idx) => (
-                    <SidebarItem 
-                        key={user.id} 
-                        avatar={`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
-                        label={`${user.firstName} ${user.lastName}`}
-                        active={idx === 1} // Keep Michael Johnson (2nd user usually) active for design consistency
-                    />
-                ))
-            )}
-          </div>
+            {openSections.users ? <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-slate-600" /> : <ChevronRight className="w-3 h-3 text-slate-400 group-hover:text-slate-600" />}
+          </button>
+          {openSections.users && (
+            <div className="space-y-1">
+              {loading ? (
+                <div className="flex items-center space-x-2 px-3 py-2 text-slate-400">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span className="text-xs">Loading...</span>
+                </div>
+              ) : (
+                  users.map((user, idx) => (
+                      <SidebarItem 
+                          key={user.id} 
+                          avatar={`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
+                          label={`${user.firstName} ${user.lastName}`}
+                          active={idx === 1} // Keep Michael Johnson (2nd user usually) active for design consistency
+                      />
+                  ))
+              )}
+            </div>
+          )}
         </div>
 
         {/* Channels Section */}
         <div>
-            <div className="flex items-center justify-between px-2 mb-4">
+            <button 
+                onClick={() => toggleSection('channels')}
+                className="w-full flex items-center justify-between px-2 mb-4 group"
+            >
                 <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Channels</h3>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
-            </div>
-            <div className="space-y-1">
-                <SidebarItem icon={MessageCircle} label="Fit4Life" color="bg-green-100 text-green-600" activeBadge />
-                <SidebarItem icon={MessageCircle} label="Fit4Life" color="bg-pink-100 text-pink-600" />
-            </div>
+                {openSections.channels ? <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-slate-600" /> : <ChevronRight className="w-3 h-3 text-slate-400 group-hover:text-slate-600" />}
+            </button>
+            {openSections.channels && (
+                <div className="space-y-1">
+                    <SidebarItem icon={MessageCircle} label="Fit4Life" color="bg-green-100 text-green-600" activeBadge />
+                    <SidebarItem icon={MessageCircle} label="Fit4Life" color="bg-pink-100 text-pink-600" />
+                </div>
+            )}
         </div>
       </div>
     </div>

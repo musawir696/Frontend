@@ -1,7 +1,20 @@
-import { ChevronDown, User as UserIcon, Plus, X, MessageSquare, Phone, Instagram, LayoutDashboard } from "lucide-react";
+import { ChevronDown, ChevronRight, User as UserIcon, Plus, X, MessageSquare, Phone, Instagram, LayoutDashboard } from "lucide-react";
+import { useState } from "react";
 import { User } from "@/types";
 
 export const DetailsPanel = ({ user }: { user: User | null }) => {
+  const [openSections, setOpenSections] = useState({
+    chat: true,
+    contact: true,
+    labels: true,
+    notes: true,
+    others: true
+  });
+
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
   if (!user) {
     return (
       <div className="w-80 border-l border-slate-200 bg-white h-[calc(100vh-64px)] hidden xl:flex items-center justify-center text-slate-400">
@@ -22,7 +35,11 @@ export const DetailsPanel = ({ user }: { user: User | null }) => {
 
       <div className="p-6 space-y-8">
         {/* Chat Data */}
-        <Section title="Chat Data">
+        <Section 
+            title="Chat Data" 
+            isOpen={openSections.chat} 
+            onToggle={() => toggleSection('chat')}
+        >
             <div className="space-y-4 pt-2">
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-slate-400">Assignee</span>
@@ -30,7 +47,7 @@ export const DetailsPanel = ({ user }: { user: User | null }) => {
                         <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center">
                             <UserIcon className="w-3 h-3 text-slate-500" />
                         </div>
-                        <span className="text-sm font-bold text-slate-900">Michael Johnson</span>
+                        <span className="text-sm font-bold text-slate-900">{user.firstName} {user.lastName}</span>
                     </div>
                 </div>
                 <div className="flex items-center justify-between">
@@ -39,14 +56,18 @@ export const DetailsPanel = ({ user }: { user: User | null }) => {
                         <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center">
                             <UserIcon className="w-3 h-3 text-slate-500" />
                         </div>
-                        <span className="text-sm font-bold text-slate-900">Sales Team</span>
+                        <span className="text-sm font-bold text-slate-900">{user.company.name}</span>
                     </div>
                 </div>
             </div>
         </Section>
 
         {/* Contact Data */}
-        <Section title="Contact Data">
+        <Section 
+            title="Contact Data" 
+            isOpen={openSections.contact} 
+            onToggle={() => toggleSection('contact')}
+        >
             <div className="space-y-4 pt-2">
                 <DataRow label="First Name" value={user.firstName} />
                 <DataRow label="Last Name" value={user.lastName} />
@@ -57,7 +78,11 @@ export const DetailsPanel = ({ user }: { user: User | null }) => {
         </Section>
 
         {/* Contact Labels */}
-        <Section title="Contact Labels">
+        <Section 
+            title="Contact Labels" 
+            isOpen={openSections.labels} 
+            onToggle={() => toggleSection('labels')}
+        >
             <div className="flex flex-wrap gap-2 pt-2">
                 <Label text="Closed Won" color="bg-blue-50 text-blue-600 border-blue-200" icon={<Phone className="w-3 h-3" />} />
                 <Label text="Chicago" color="bg-blue-50 text-blue-600 border-blue-200" icon={<MessageSquare className="w-3 h-3" />} />
@@ -68,7 +93,11 @@ export const DetailsPanel = ({ user }: { user: User | null }) => {
         </Section>
 
         {/* Notes */}
-        <Section title="Notes">
+        <Section 
+            title="Notes" 
+            isOpen={openSections.notes} 
+            onToggle={() => toggleSection('notes')}
+        >
             <div className="space-y-2 pt-2">
                 <input 
                     type="text" 
@@ -82,7 +111,11 @@ export const DetailsPanel = ({ user }: { user: User | null }) => {
         </Section>
 
         {/* Other Chats */}
-        <Section title="Other Chats">
+        <Section 
+            title="Other Chats" 
+            isOpen={openSections.others} 
+            onToggle={() => toggleSection('others')}
+        >
             <div className="space-y-4 pt-2">
                 <div className="flex items-start justify-between">
                     <div className="flex items-center space-x-3">
@@ -103,19 +136,19 @@ export const DetailsPanel = ({ user }: { user: User | null }) => {
   );
 };
 
-const Section = ({ title, children }: { title: string, children: React.ReactNode }) => (
+const Section = ({ title, children, isOpen, onToggle }: { title: string, children: React.ReactNode, isOpen: boolean, onToggle: () => void }) => (
     <div className="space-y-2">
-        <button className="w-full flex items-center justify-between group">
+        <button onClick={onToggle} className="w-full flex items-center justify-between group">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">{title}</h3>
-            <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            {isOpen ? <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" /> : <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />}
         </button>
-        {children}
+        {isOpen && children}
     </div>
 );
 
 const DataRow = ({ label, value }: { label: string, value: string }) => (
-    <div className="flex flex-col space-y-1">
-        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">{label}</span>
+    <div className="flex items-center justify-between py-1">
+        <span className="text-sm text-slate-400">{label}</span>
         <span className="text-sm font-bold text-slate-900">{value}</span>
     </div>
 );
