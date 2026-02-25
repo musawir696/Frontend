@@ -17,10 +17,10 @@ export const Navbar = () => {
       <div className="flex items-center space-x-8">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl leading-none">h</span>
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-black text-xs leading-none">BOX</span>
             </div>
-            <span className="text-slate-900 font-bold text-xl tracking-tight">heyy</span>
+            <span className="text-slate-900 font-extrabold text-xl tracking-tight uppercase px-1">pad</span>
         </div>
 
         {/* Desktop Nav */}

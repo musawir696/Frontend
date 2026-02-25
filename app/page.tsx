@@ -13,8 +13,6 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-import Image from "next/image";
-
 import { DashboardContainer } from "@/components/dashboard/DashboardContainer";
 
 export default function Home() {
@@ -33,10 +31,10 @@ export default function Home() {
         <HoneycombIcon Icon={Target} label="Goal" initialX={88} initialY={42} />
 
         {/* Central Content */}
-        <div className="flex flex-col items-center justify-center z-10 space-y-8">
+        <div className="flex flex-col items-center justify-center z-10 space-y-6 pt-10">
           <GlowingRing />
           
-          <div className="text-center space-y-4 max-w-lg">
+          <div className="text-center space-y-4 max-w-lg mb-8">
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -49,58 +47,23 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
-              className="text-slate-400 text-lg md:text-xl font-medium"
+              className="text-slate-400 text-sm md:text-base font-medium px-4"
             >
               We are extracting information from the above honey combs to your system
             </motion.p>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="pt-6"
-            >
-              <a 
-                href="/dashboard"
-                className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold shadow-lg shadow-blue-500/30 transition-all hover:scale-105 active:scale-95"
-              >
-                View Dashboard
-              </a>
-            </motion.div>
           </div>
+
+          {/* Integrated Dashboard UI */}
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.8 }}
+            className="w-full max-w-[1240px] shadow-2xl rounded-t-2xl overflow-hidden border-t border-x border-white/10"
+          >
+            <DashboardContainer isPreview />
+          </motion.div>
         </div>
-
-        {/* Floating interactive element */}
-        <motion.div
-          drag
-          dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }}
-          className="absolute bottom-10 left-10 w-16 h-16 rounded-full bg-blue-500/20 backdrop-blur-xl border border-blue-400/30 flex items-center justify-center cursor-move shadow-lg shadow-blue-500/20"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 1.5, type: "spring" }}
-        >
-          <div className="w-10 h-10 rounded-full bg-blue-600 overflow-hidden ring-2 ring-blue-300">
-               <Image 
-                  src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
-                  alt="avatar" 
-                  unoptimized
-                  width={40}
-                  height={40}
-               />
-          </div>
-        </motion.div>
       </div>
-
-      {/* Dashboard Preview (Integrated UI) */}
-      <motion.div 
-        initial={{ opacity: 0, y: 100 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-        className="w-full max-w-[95%] mx-auto mb-20 z-20"
-      >
-        <DashboardContainer isPreview />
-      </motion.div>
     </main>
   );
 }
