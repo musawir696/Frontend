@@ -1,8 +1,26 @@
-"use client";
-
-import { User, ChevronDown, MessageCircle, Hash } from "lucide-react";
+import { User as UserIcon, ChevronDown, MessageCircle, Hash, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { fetchUsers } from "@/lib/api";
+import { User } from "@/types";
 
 export const Sidebar = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadUsers() {
+      try {
+        const data = await fetchUsers();
+        setUsers(data.slice(0, 7)); // Only show top 7 in sidebar
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadUsers();
+  }, []);
+
   return (
     <div className="w-64 border-r border-slate-200 bg-slate-50/50 h-[calc(100vh-64px)] flex flex-col p-4 overflow-y-auto hidden lg:flex">
       <div className="space-y-6">
@@ -10,9 +28,9 @@ export const Sidebar = () => {
         <div>
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 px-2">Inbox</h3>
           <div className="space-y-1">
-            <SidebarItem icon={User} label="My Inbox" />
+            <SidebarItem icon={UserIcon} label="My Inbox" />
             <SidebarItem icon={MessageCircle} label="All" count={28} active />
-            <SidebarItem icon={User} label="Unassigned" count={5} />
+            <SidebarItem icon={UserIcon} label="Unassigned" count={5} />
           </div>
         </div>
 
@@ -35,15 +53,21 @@ export const Sidebar = () => {
             <ChevronDown className="w-3 h-3 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <SidebarItem avatar="SW" label="Sarah Williams" count={2} />
-            <SidebarItem avatar="MJ" label="Michael Johnson" count={11} active />
-            <SidebarItem avatar="ED" label="Emily Davis" />
-            <SidebarItem avatar="CM" label="Christopher Miller" count={4} />
-            <SidebarItem avatar="AG" label="Amanda Garcia" count={5} />
-            <SidebarItem avatar="JM" label="Joshua Martinez" />
-            <SidebarItem avatar="AT" label="Ashley Taylor" count={1} />
-            <SidebarItem avatar="DA" label="Daniel Anderson" />
-            <SidebarItem avatar="JT" label="Jessica Thomas" count={2} />
+            {loading ? (
+               <div className="flex items-center space-x-2 px-3 py-2 text-slate-400">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span className="text-xs">Loading...</span>
+               </div>
+            ) : (
+                users.map((user, idx) => (
+                    <SidebarItem 
+                        key={user.id} 
+                        avatar={`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
+                        label={`${user.firstName} ${user.lastName}`}
+                        active={idx === 1} // Keep Michael Johnson (2nd user usually) active for design consistency
+                    />
+                ))
+            )}
           </div>
         </div>
 
