@@ -1,6 +1,7 @@
 "use client";
 
 import { Inbox, LayoutGrid, Users, Zap, Rocket, Settings } from "lucide-react";
+import Image from "next/image";
 
 export const Navbar = () => {
   const navItems = [
@@ -16,10 +17,16 @@ export const Navbar = () => {
       <div className="flex items-center space-x-8">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-black text-xs leading-none">BOX</span>
-            </div>
-            <span className="text-slate-900 font-extrabold text-xl tracking-tight uppercase px-1">pad</span>
+          <div className="flex items-center justify-center">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="rounded-lg object-contain"
+            />
+          </div>
+          
         </div>
 
         {/* Desktop Nav */}
@@ -28,8 +35,8 @@ export const Navbar = () => {
             <button
               key={item.name}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                item.active 
-                  ? "bg-slate-100 text-slate-900" 
+                item.active
+                  ? "bg-slate-100 text-slate-900"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
               }`}
             >
@@ -38,13 +45,13 @@ export const Navbar = () => {
             </button>
           ))}
         </div>
-        
+
         {/* Simplified Mobile Nav Icon */}
         <div className="lg:hidden flex items-center space-x-1">
-           <button className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-slate-100 text-slate-900 text-xs font-bold">
-              <Inbox className="w-4 h-4" />
-              <span>Inbox</span>
-           </button>
+          <button className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-slate-100 text-slate-900 text-xs font-bold">
+            <Inbox className="w-4 h-4" />
+            <span>Inbox</span>
+          </button>
         </div>
       </div>
 
@@ -56,7 +63,9 @@ export const Navbar = () => {
           <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-sm">
             M
           </div>
-          <span className="text-sm font-semibold text-slate-900 hidden sm:inline">Michael Johnson</span>
+          <span className="text-sm font-semibold text-slate-900 hidden sm:inline">
+            Michael Johnson
+          </span>
         </div>
       </div>
     </nav>

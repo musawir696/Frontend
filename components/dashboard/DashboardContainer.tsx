@@ -27,7 +27,7 @@ export const DashboardContainer = ({ isPreview = false }: { isPreview?: boolean 
       <div className="flex flex-1 overflow-hidden relative">
         <Sidebar />
         
-        <div className={`flex-1 flex overflow-hidden ${showChatOnMobile ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`${showChatOnMobile ? 'hidden md:flex' : 'flex'}`}>
           <ChatList onSelectUser={handleSelectUser} selectedUserId={selectedUser?.id} />
         </div>
 

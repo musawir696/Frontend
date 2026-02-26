@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export const GlowingRing = () => {
   return (
     <div className="relative flex items-center justify-center w-64 h-64 md:w-80 md:h-80">
-      {/* Outer spinning glow */}
+      
       <motion.div
         className="absolute inset-0 rounded-full border border-blue-500/30 blur-sm"
         animate={{ rotate: 360 }}

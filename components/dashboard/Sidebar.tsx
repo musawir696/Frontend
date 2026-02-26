@@ -20,7 +20,7 @@ export const Sidebar = () => {
     async function loadUsers() {
       try {
         const data = await fetchUsers();
-        setUsers(data.slice(0, 7)); // Only show top 7 in sidebar
+        setUsers(data.slice(0, 7)); 
       } catch (err) {
         console.error(err);
       } finally {
@@ -82,7 +82,7 @@ export const Sidebar = () => {
                           key={user.id} 
                           avatar={`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
                           label={`${user.firstName} ${user.lastName}`}
-                          active={idx === 1} // Keep Michael Johnson (2nd user usually) active for design consistency
+                          active={idx === 1} 
                       />
                   ))
               )}
